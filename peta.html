@@ -1,0 +1,181 @@
+<!DOCTYPE html> 
+<html lang="id"> 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eksplorasi Yogyakarta dengan Leaflet</title> 
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" /> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.css" />
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            height: 100vh;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar ul li a {
+            color: #1abc9c;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            color: #f39c12;
+        }
+
+        #map { 
+            flex: 1; 
+            height: 100vh; 
+        }
+
+        h1 {
+            display: none;
+        }
+    </style> 
+</head> 
+
+<body>
+
+    <div class="sidebar">
+        <h2>Tempat Ikonik Jogja</h2>
+        <ul>
+            <li><a href="https://id.wikipedia.org/wiki/Gunung_Merapi" target="_blank">Gunung Merapi</a></li>
+            <li><a href="https://id.wikipedia.org/wiki/Tugu_Yogyakarta" target="_blank">Tugu Yogyakarta</a></li>
+            <li><a href="https://id.wikipedia.org/wiki/Keraton_Ngayogyakarta_Hadiningrat" target="_blank">Keraton Yogyakarta</a></li>
+            <li><a href="https://id.wikipedia.org/wiki/Panggung_Krapyak" target="_blank">Panggung Krapyak</a></li>
+            <li><a href="https://id.wikipedia.org/wiki/Pantai_Parangtritis" target="_blank">Pantai Parangtritis</a></li>
+        </ul>
+    </div>
+
+    <div id="map"></div> 
+
+    <script>
+        // Layer: OpenStreetMap & Topografi
+        var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        var topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+        });
+
+        // Inisialisasi Peta
+        var map = L.map('map', { 
+            center: [-7.79558, 110.36949], 
+            zoom: 11,
+            layers: [osmLayer] 
+        });
+
+        L.control.scale().addTo(map);
+
+        // Polyline Malioboro
+        var jalanMalioboro = L.polyline([
+            [-7.7927, 110.3657], 
+            [-7.7910, 110.3668], 
+            [-7.7890, 110.3679], 
+            [-7.7870, 110.3689], 
+            [-7.7855, 110.3705]
+        ], {
+            color: 'red',
+            weight: 5,
+            opacity: 0.7
+        }).addTo(map).bindPopup("Jalan Malioboro");
+
+        // Poligon Wilayah Keraton
+        var keratonPolygon = L.polygon([
+            [-7.8073, 110.3646],
+            [-7.8070, 110.3675],
+            [-7.8095, 110.3678],
+            [-7.8098, 110.3647],
+            [-7.8073, 110.3646]
+        ], {
+            color: 'blue',
+            fillColor: '#3f93e4',
+            fillOpacity: 0.5
+        }).addTo(map).bindPopup("<b>Wilayah Keraton Yogyakarta</b>");
+
+        // Marker Icons Berwarna
+        var redIcon = L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] });
+        var blueIcon = L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] });
+        var greenIcon = L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] });
+        var yellowIcon = L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] });
+        var purpleIcon = L.icon({ iconUrl: 'https://maps.google.com/mapfiles/ms/icons/purple-dot.png', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] });
+
+        // Marker Tempat Menarik
+        L.marker([-7.5407, 110.4461], {icon: greenIcon}).addTo(map)
+            .bindPopup("<b>Gunung Merapi</b><br>Gunung api aktif yang terkenal di Indonesia.");
+
+        L.marker([-7.7828, 110.3686], {icon: redIcon}).addTo(map)
+            .bindPopup("<b>Tugu Yogyakarta</b><br>Ikon bersejarah Kota Jogja.");
+
+        L.marker([-7.8056, 110.3649], {icon: blueIcon}).addTo(map)
+            .bindPopup("<b>Keraton Yogyakarta</b><br>Istana Kesultanan Ngayogyakarta Hadiningrat.");
+
+        L.marker([-7.8191, 110.3585], {icon: yellowIcon}).addTo(map)
+            .bindPopup("<b>Panggung Krapyak</b><br>Bangunan bersejarah bagian dari garis imajiner Jogja.");
+
+        L.marker([-8.0267, 110.3317], {icon: purpleIcon}).addTo(map)
+            .bindPopup("<b>Pantai Parangtritis</b><br>Pantai terkenal di selatan Yogyakarta.");
+
+        // Lingkaran Area Sekitar Tugu
+        L.circle([-7.7828, 110.3686], {
+            color: 'green',
+            fillColor: '#30f',
+            fillOpacity: 0.2,
+            radius: 500
+        }).addTo(map).bindPopup("Area sekitar Tugu Jogja");
+
+        // MiniMap
+        var miniMapLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        var miniMap = new L.Control.MiniMap(miniMapLayer, {
+            toggleDisplay: true,
+            minimized: false
+        }).addTo(map);
+
+        // Layer Control
+        var baseMaps = {
+            "OpenStreetMap": osmLayer,
+            "Topografi": topoLayer
+        };
+
+        L.control.layers(baseMaps).addTo(map);
+    </script>
+
+</body> 
+</html>
